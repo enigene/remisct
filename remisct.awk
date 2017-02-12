@@ -12,7 +12,7 @@
 # v1.4,  14 Jan 2015 - corrected syntax; added commentaries;
 #                      removing unused elements
 #
-# Usage: gawk -f remisct-v1.3.awk input.bed > output.bed
+# Usage: gawk -v header=1 -f remisct-v1.3.awk input.bed > output.bed
 # Recommended run two times, because second pass may also make changes.
 
 BEGIN {
@@ -29,7 +29,7 @@ BEGIN {
   i = 1;
 }
 
-/^track|^browser/ { print }
+header && /^track|^browser/ { print }
 
 {
   # on each line of input file we are
