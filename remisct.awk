@@ -29,6 +29,8 @@ BEGIN {
   i = 1;
 }
 
+/^track|^browser/ { print }
+
 {
   # on each line of input file we are
   if ($1 ~ chrID) {
