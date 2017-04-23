@@ -24,7 +24,7 @@ BEGIN {
   SUBSEP = ";";
   # setting default value, from which line to processing begins
   # it may be reset by passing -v chrID=something
-  if(!chrID) chrID = "chr";
+#  if(!chrID) chrID = "chr";
   # setting counter default value
   i = 1;
 }
