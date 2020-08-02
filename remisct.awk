@@ -77,7 +77,7 @@ header && /^track|^browser/ { print }
       # replacing values in array only if length of current feature greater
       # than exist
 #      if (mLength > mLengthPrev) {
-      if (scoreToLength > scoreToLengthPrev) {
+      if (+scoreToLength > +scoreToLengthPrev) {
         aStart[chrom,mStart] = i;
         aEnd[chrom,mEnd] = i;
       }
@@ -88,13 +88,13 @@ header && /^track|^browser/ { print }
 #      mLengthPrev = GetField(lineAlreadyIn, 10);
       scoreToLengthPrev = GetField(lineAlreadyIn, 11);
 #      if (mLength > mLengthPrev) {
-      if (scoreToLength > scoreToLengthPrev) {
+      if (+scoreToLength > +scoreToLengthPrev) {
         aStart[chrom,mStart] = i;
         aEnd[chrom,mEnd] = i;
       }
     }
     # adds to the array new values, check the non-zero length
-    if (!((chrom SUBSEP mStart) in aStart) && !((chrom SUBSEP mEnd) in aEnd) && mLength) {
+    if (!((chrom SUBSEP mStart) in aStart) && !((chrom SUBSEP mEnd) in aEnd) && (+mLength >= 10)) {
       aStart[chrom,mStart] = i;
       aEnd[chrom,mEnd] = i;
     }
@@ -165,7 +165,7 @@ END {
       # removing extra spaces
       gsub(/[[:space:]]/, "", line);
       # searching overlapping elements
-      if (currStart > prevEnd) {
+      if (+currStart > +prevEnd) {
         # replacing subscript separators by output field separator
         gsub(SUBSEP, OFS, line);
         # replacing extra spaces at the end of line
@@ -173,7 +173,7 @@ END {
         # printing the resulting line
         print line;
       } else {
-        if (currEnd > prevEnd) {
+        if (+currEnd > +prevEnd) {
           # changing starting position in the next line
           gsub(SUBSEP currStart SUBSEP, SUBSEP prevEnd+1 SUBSEP, line);
           # replacing subscript separators by output field separator 
@@ -194,8 +194,8 @@ END {
 function GetField(string,field,  n) {
   if(length(string"") > 0) {
     n = split(string, array, SUBSEP);
-    if (field > 0) {
-      if (field <= n) {
+    if (+field > 0) {
+      if (+field <= +n) {
         result = array[field];
       }
     } else {
