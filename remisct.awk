@@ -55,10 +55,12 @@ header && /^track|^browser/ { print }
     itemRGB = $9;
     # setting variable with calculated length of segment
     mLength = mEnd - mStart;
+    # get score/length ratio
+    scoreToLength = score / mLength;
 
     # add all received parameters as string with separators to the array,
     # indexed by chromosome id and counter with line number
-    aLine[chrom,i] = chrom SUBSEP mStart SUBSEP mEnd SUBSEP mType SUBSEP score SUBSEP strand SUBSEP tStart SUBSEP tEnd SUBSEP itemRGB SUBSEP mLength;
+    aLine[chrom,i] = chrom SUBSEP mStart SUBSEP mEnd SUBSEP mType SUBSEP score SUBSEP strand SUBSEP tStart SUBSEP tEnd SUBSEP itemRGB SUBSEP mLength SUBSEP scoreToLength;
     # second array indexed by chromosome id contains all the relevant line numbers
     aChrs[chrom] = aChrs[chrom] SUBSEP i;
 
@@ -70,10 +72,12 @@ header && /^track|^browser/ { print }
       # counter as second index in array we get from the already filtered array
       lineAlreadyIn = aLine[chrom,aStart[chrom,mStart]];
       # using the functions we get the field with length from a delimited string
-      mLengthPrev = GetField(lineAlreadyIn, 10);
+#      mLengthPrev = GetField(lineAlreadyIn, 10);
+      scoreToLengthPrev = GetField(lineAlreadyIn, 11);
       # replacing values in array only if length of current feature greater
       # than exist
-      if (mLength > mLengthPrev) {
+#      if (mLength > mLengthPrev) {
+      if (scoreToLength > scoreToLengthPrev) {
         aStart[chrom,mStart] = i;
         aEnd[chrom,mEnd] = i;
       }
@@ -81,13 +85,15 @@ header && /^track|^browser/ { print }
     # and the same operations for end positions
     if ((chrom SUBSEP mEnd) in aEnd) {
       lineAlreadyIn = aLine[chrom,aEnd[chrom,mEnd]];
-      mLengthPrev = GetField(lineAlreadyIn, 10);
-      if (mLength > mLengthPrev) {
+#      mLengthPrev = GetField(lineAlreadyIn, 10);
+      scoreToLengthPrev = GetField(lineAlreadyIn, 11);
+#      if (mLength > mLengthPrev) {
+      if (scoreToLength > scoreToLengthPrev) {
         aStart[chrom,mStart] = i;
         aEnd[chrom,mEnd] = i;
       }
     }
-    # adds to the array new values
+    # adds to the array new values, check the non-zero length
     if (!((chrom SUBSEP mStart) in aStart) && !((chrom SUBSEP mEnd) in aEnd) && mLength) {
       aStart[chrom,mStart] = i;
       aEnd[chrom,mEnd] = i;
@@ -154,7 +160,8 @@ END {
       # getting whole line by chr id and starting position
       line = aLine[elemChr,aStartIG[aStartIGS[j]]];
       # removing length placed in last field
-      gsub(/[[:digit:]]+$/, "", line);
+#      gsub(/[[:digit:]]+$/, "", line);
+      sub(/[[:digit:]]+.[[:digit:]\.]+$/, "", line);
       # removing extra spaces
       gsub(/[[:space:]]/, "", line);
       # searching overlapping elements
