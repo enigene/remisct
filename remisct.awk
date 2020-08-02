@@ -88,7 +88,7 @@ header && /^track|^browser/ { print }
       }
     }
     # adds to the array new values
-    if (!((chrom SUBSEP mStart) in aStart) && !((chrom SUBSEP mEnd) in aEnd)) {
+    if (!((chrom SUBSEP mStart) in aStart) && !((chrom SUBSEP mEnd) in aEnd) && mLength) {
       aStart[chrom,mStart] = i;
       aEnd[chrom,mEnd] = i;
     }
