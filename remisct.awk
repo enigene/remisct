@@ -56,7 +56,7 @@ header && /^track|^browser/ { print }
     # setting variable with calculated length of segment
     mLength = mEnd - mStart;
     # get score/length ratio
-    scoreToLength = score / mLength;
+    if(mLength>0){scoreToLength = score / mLength}else{next};
 
     # add all received parameters as string with separators to the array,
     # indexed by chromosome id and counter with line number
